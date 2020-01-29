@@ -1,7 +1,7 @@
 import { Base } from '../base.interface';
 export class User extends Base {
-  username: string;
+  qq: number;
+  email: string;
   password: string;
   nickName: string;
-  gender: number;
 }

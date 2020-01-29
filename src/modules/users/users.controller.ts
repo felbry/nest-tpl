@@ -4,8 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 const jwt = require('jsonwebtoken');
 
 import { User } from './user.interface';
-import ReqLogin from './dto/req-login.dto';
-import ResLogin from './dto/res-login.dto';
+import { ReqRegistry } from './dto/registry.dto';
+import { ReqLogin, ResLogin } from './dto/login.dto';
 import { secretKey } from 'src/config';
 
 @Injectable()
@@ -15,10 +15,10 @@ export class UsersController {
 
   @Post('login')
   async login(@Body() userInfo: ReqLogin): Promise<ResLogin> {
-    const { username, password } = userInfo;
+    const { qq, password } = userInfo;
     const userRet: User | null = await this.userModel
       .findOne({
-        username,
+        qq,
         password,
       })
       .exec();
@@ -31,6 +31,28 @@ export class UsersController {
           secretKey,
         ),
       } as ResLogin;
+    } else {
+      throw Error('qq或密码错误');
+    }
+  }
+
+  @Post('registry')
+  async registry(@Body() userInfo: ReqRegistry): Promise<User> {
+    const { qq, password, nickName, email } = userInfo;
+    const userRet: User | null = await this.userModel
+      .findOne({
+        qq
+      })
+      .exec();
+    if (userRet) {
+      throw Error('用户已存在')
+    } else {
+      return this.userModel.create({
+        email,
+        password,
+        nickName,
+        qq
+      });
     }
   }
 }
