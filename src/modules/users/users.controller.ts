@@ -1,7 +1,9 @@
 import { Model } from 'mongoose';
-import { Controller, Injectable, Post, Body } from '@nestjs/common';
+import { Controller, Injectable, Post, Get, Body, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 const jwt = require('jsonwebtoken');
+
+import { AuthGuard } from '../../guards/auth.guard'
 
 import { User } from './user.interface';
 import { ReqRegistry } from './dto/registry.dto';
@@ -54,5 +56,11 @@ export class UsersController {
         qq
       });
     }
+  }
+
+  @Get('info')
+  @UseGuards(AuthGuard)
+  async getInfo(): Promise<any> {
+    return Promise.resolve({});
   }
 }
