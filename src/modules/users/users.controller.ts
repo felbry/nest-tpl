@@ -1,9 +1,19 @@
 import { Model } from 'mongoose';
-import { Controller, Injectable, Post, Get, Body, UseGuards } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import {
+  Controller,
+  Injectable,
+  Post,
+  Get,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 const jwt = require('jsonwebtoken');
 
-import { AuthGuard } from '../../guards/auth.guard'
+import { AuthGuard } from '../../guards/auth.guard';
+import { RolesGuard } from '../../guards/roles.guard';
+import { Roles } from '../../decorators/roles.decorator';
+import { Role } from '../../constant';
 
 import { User } from './user.interface';
 import { ReqRegistry } from './dto/registry.dto';
@@ -28,7 +38,7 @@ export class UsersController {
       return {
         token: jwt.sign(
           {
-            uid: userRet._id,
+            id: userRet._id,
           },
           secretKey,
         ),
@@ -43,23 +53,24 @@ export class UsersController {
     const { qq, password, nickName, email } = userInfo;
     const userRet: User | null = await this.userModel
       .findOne({
-        qq
+        qq,
       })
       .exec();
     if (userRet) {
-      throw Error('用户已存在')
+      throw Error('用户已存在');
     } else {
       return this.userModel.create({
         email,
         password,
         nickName,
-        qq
+        qq,
       });
     }
   }
 
   @Get('info')
-  @UseGuards(AuthGuard)
+  @Roles([Role.Common])
+  @UseGuards(AuthGuard, RolesGuard)
   async getInfo(): Promise<any> {
     return Promise.resolve({});
   }

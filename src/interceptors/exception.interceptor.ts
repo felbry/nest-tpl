@@ -23,8 +23,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
         exception.response
           ? exception.response.error
           : exception.errors
-            ? JSON.stringify(exception.errors)
-            : exception
+          ? JSON.stringify(exception.errors)
+          : exception
       }`,
     });
   }

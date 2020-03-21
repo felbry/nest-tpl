@@ -8,9 +8,16 @@ import {
   Get,
   Post,
   Body,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InjectModel } from '@nestjs/mongoose';
+
+import { AuthGuard } from '../../guards/auth.guard';
+import { RolesGuard } from '../../guards/roles.guard';
+import { Roles } from '../../decorators/roles.decorator';
+import { Role } from '../../constant';
+
 import { Artical } from './artical.interface';
 import { MulterFile } from '../multer-file.interface';
 
@@ -22,8 +29,10 @@ export class ArticalsController {
   ) {}
 
   @Get()
+  @Roles([Role.Admin])
+  @UseGuards(AuthGuard, RolesGuard)
   async getArticals(): Promise<Artical[]> {
-    return await this.articalModel.find().exec();
+    return await this.articalModel.find();
   }
 
   @Post()

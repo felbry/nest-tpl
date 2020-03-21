@@ -16,5 +16,9 @@ export const UserSchema = new mongoose.Schema({
   nickName: {
     type: String,
     required: true,
-  }
+  },
+  roles: {
+    type: Array,
+    default: [],
+  },
 });
